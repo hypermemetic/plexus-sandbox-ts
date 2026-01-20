@@ -1,0 +1,18 @@
+{
+  "name": "@plexus/client",
+  "version": "0.0.0-65ec630bdb7a1502",
+  "type": "module",
+  "main": "index.ts",
+  "scripts": {
+    "test": "npx tsx test/smoke.test.ts",
+    "typecheck": "npx tsc --noEmit"
+  },
+  "dependencies": {
+    "ws": "^8.0.0"
+  },
+  "devDependencies": {
+    "@types/ws": "^8.18.1",
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "name": "substrate-sandbox-ts",
+  "version": "0.1.0",
+  "description": "TypeScript sandbox for testing Substrate/Plexus client",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/main.ts",
+    "start": "tsx src/main.ts",
+    "build": "tsc",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@plexus/client": "file:./lib"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@types/ws": "^8.18.1",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3"
+  }
+}
