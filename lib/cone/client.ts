@@ -31,25 +31,25 @@ export class ConeClientImpl implements ConeClient {
 
   /** Chat with a cone - appends prompt to context, calls LLM, advances head */
   async *chat(identifier: ConeIdentifier, prompt: string, ephemeral?: boolean | null): AsyncGenerator<ChatEvent> {
-    const stream = this.rpc.call('cone.chat', { ephemeral, identifier, prompt });
+    const stream = this.rpc.call('cone.chat', { ephemeral: ephemeral, identifier: identifier, prompt: prompt });
     yield* extractData<ChatEvent>(stream);
   }
 
   /** Create a new cone (LLM agent with persistent conversation context) */
   async create(modelId: string, name: string, metadata?: unknown, systemPrompt?: string | null): Promise<CreateResult> {
-    const stream = this.rpc.call('cone.create', { metadata, modelId, name, systemPrompt });
+    const stream = this.rpc.call('cone.create', { metadata: metadata, model_id: modelId, name: name, system_prompt: systemPrompt });
     return collectOne<CreateResult>(stream);
   }
 
   /** Delete a cone (associated tree is preserved) */
   async delete(identifier: ConeIdentifier): Promise<DeleteResult> {
-    const stream = this.rpc.call('cone.delete', { identifier });
+    const stream = this.rpc.call('cone.delete', { identifier: identifier });
     return collectOne<DeleteResult>(stream);
   }
 
   /** Get cone configuration by name or ID */
   async get(identifier: ConeIdentifier): Promise<GetResult> {
-    const stream = this.rpc.call('cone.get', { identifier });
+    const stream = this.rpc.call('cone.get', { identifier: identifier });
     return collectOne<GetResult>(stream);
   }
 
@@ -73,7 +73,7 @@ export class ConeClientImpl implements ConeClient {
 
   /** Move cone's canonical head to a different node in the tree */
   async setHead(identifier: ConeIdentifier, nodeId: UUID): Promise<SetHeadResult> {
-    const stream = this.rpc.call('cone.set_head', { identifier, nodeId });
+    const stream = this.rpc.call('cone.set_head', { identifier: identifier, node_id: nodeId });
     return collectOne<SetHeadResult>(stream);
   }
 

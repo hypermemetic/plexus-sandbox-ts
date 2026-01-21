@@ -35,19 +35,19 @@ export class ChangelogClientImpl implements ChangelogClient {
 
   /** Add a changelog entry for a plexus hash transition */
   async *add(hash: string, summary: string, author?: string | null, details?: unknown[] | null, previousHash?: string | null, queueId?: string | null): AsyncGenerator<ChangelogEvent> {
-    const stream = this.rpc.call('changelog.add', { author, details, hash, previousHash, queueId, summary });
+    const stream = this.rpc.call('changelog.add', { author: author, details: details, hash: hash, previous_hash: previousHash, queue_id: queueId, summary: summary });
     yield* extractData<ChangelogEvent>(stream);
   }
 
   /** Check current status - is the current plexus hash documented? */
   async *check(currentHash: string): AsyncGenerator<ChangelogEvent> {
-    const stream = this.rpc.call('changelog.check', { currentHash });
+    const stream = this.rpc.call('changelog.check', { current_hash: currentHash });
     yield* extractData<ChangelogEvent>(stream);
   }
 
   /** Get a specific changelog entry by hash */
   async *get(hash: string): AsyncGenerator<ChangelogEvent> {
-    const stream = this.rpc.call('changelog.get', { hash });
+    const stream = this.rpc.call('changelog.get', { hash: hash });
     yield* extractData<ChangelogEvent>(stream);
   }
 
@@ -59,31 +59,31 @@ export class ChangelogClientImpl implements ChangelogClient {
 
   /** Add a planned change to the queue */
   async *queueAdd(description: string, tags?: unknown[] | null): AsyncGenerator<ChangelogEvent> {
-    const stream = this.rpc.call('changelog.queue_add', { description, tags });
+    const stream = this.rpc.call('changelog.queue_add', { description: description, tags: tags });
     yield* extractData<ChangelogEvent>(stream);
   }
 
   /** Mark a queue entry as complete */
   async *queueComplete(hash: string, id: string): AsyncGenerator<ChangelogEvent> {
-    const stream = this.rpc.call('changelog.queue_complete', { hash, id });
+    const stream = this.rpc.call('changelog.queue_complete', { hash: hash, id: id });
     yield* extractData<ChangelogEvent>(stream);
   }
 
   /** Get a specific queue entry by ID */
   async *queueGet(id: string): AsyncGenerator<ChangelogEvent> {
-    const stream = this.rpc.call('changelog.queue_get', { id });
+    const stream = this.rpc.call('changelog.queue_get', { id: id });
     yield* extractData<ChangelogEvent>(stream);
   }
 
   /** List all queue entries, optionally filtered by tag */
   async *queueList(tag?: string | null): AsyncGenerator<ChangelogEvent> {
-    const stream = this.rpc.call('changelog.queue_list', { tag });
+    const stream = this.rpc.call('changelog.queue_list', { tag: tag });
     yield* extractData<ChangelogEvent>(stream);
   }
 
   /** List pending queue entries, optionally filtered by tag */
   async *queuePending(tag?: string | null): AsyncGenerator<ChangelogEvent> {
-    const stream = this.rpc.call('changelog.queue_pending', { tag });
+    const stream = this.rpc.call('changelog.queue_pending', { tag: tag });
     yield* extractData<ChangelogEvent>(stream);
   }
 

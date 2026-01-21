@@ -21,13 +21,13 @@ export class HyperforgeForgeGithubClientImpl implements HyperforgeForgeGithubCli
 
   /** Check authentication status */
   async *authStatus(token: string): AsyncGenerator<ForgeEvent> {
-    const stream = this.rpc.call('hyperforge.forge.github.auth_status', { token });
+    const stream = this.rpc.call('hyperforge.forge.github.auth_status', { token: token });
     yield* extractData<ForgeEvent>(stream);
   }
 
   /** List repositories for a user */
   async *reposList(owner: string, token: string): AsyncGenerator<ForgeEvent> {
-    const stream = this.rpc.call('hyperforge.forge.github.repos_list', { owner, token });
+    const stream = this.rpc.call('hyperforge.forge.github.repos_list', { owner: owner, token: token });
     yield* extractData<ForgeEvent>(stream);
   }
 

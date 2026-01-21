@@ -29,6 +29,7 @@ export * as HyperforgeOrgJuggernautlabs from './hyperforge/org/juggernautlabs';
 export * as HyperforgeOrgJuggernautlabsRepos from './hyperforge/org/juggernautlabs/repos';
 export * as HyperforgeOrgJuggernautlabsSecrets from './hyperforge/org/juggernautlabs/secrets';
 export * as HyperforgeWorkspace from './hyperforge/workspace';
+export * as Jsexec from './jsexec';
 export * as Loopback from './loopback';
 export * as Mustache from './mustache';
 export * as Solar from './solar';

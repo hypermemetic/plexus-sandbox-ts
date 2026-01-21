@@ -19,7 +19,7 @@ export class HyperforgeForgeCodebergClientImpl implements HyperforgeForgeCodeber
 
   /** List repositories for a user */
   async *reposList(owner: string, token: string): AsyncGenerator<ForgeEvent> {
-    const stream = this.rpc.call('hyperforge.forge.codeberg.repos_list', { owner, token });
+    const stream = this.rpc.call('hyperforge.forge.codeberg.repos_list', { owner: owner, token: token });
     yield* extractData<ForgeEvent>(stream);
   }
 

@@ -21,13 +21,13 @@ export class EchoClientImpl implements EchoClient {
 
   /** Echo a message back */
   async echo(count: number, message: string): Promise<EchoEvent> {
-    const stream = this.rpc.call('echo.echo', { count, message });
+    const stream = this.rpc.call('echo.echo', { count: count, message: message });
     return collectOne<EchoEvent>(stream);
   }
 
   /** Echo a simple message once */
   async once(message: string): Promise<EchoEvent> {
-    const stream = this.rpc.call('echo.once', { message });
+    const stream = this.rpc.call('echo.once', { message: message });
     return collectOne<EchoEvent>(stream);
   }
 

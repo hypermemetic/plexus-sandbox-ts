@@ -44,7 +44,7 @@ export interface ArborClient {
   treeListScheduled(): AsyncGenerator<ArborEvent>;
   /** Release ownership of a tree (decrement reference count) */
   treeRelease(count: number, ownerId: string, treeId: UUID): AsyncGenerator<ArborEvent>;
-  /** Render tree as text visualization */
+  /** Render tree as text visualization  If parent context is available, automatically resolves handles to show actual content. Otherwise, shows handle references. */
   treeRender(treeId: UUID): AsyncGenerator<ArborEvent>;
   /** Update tree metadata */
   treeUpdateMetadata(metadata: unknown, treeId: UUID): AsyncGenerator<ArborEvent>;
@@ -56,55 +56,55 @@ export class ArborClientImpl implements ArborClient {
 
   /** Get all external handles in the path to a node */
   async *contextGetHandles(nodeId: UUID, treeId: UUID): AsyncGenerator<ArborEvent> {
-    const stream = this.rpc.call('arbor.context_get_handles', { nodeId, treeId });
+    const stream = this.rpc.call('arbor.context_get_handles', { node_id: nodeId, tree_id: treeId });
     yield* extractData<ArborEvent>(stream);
   }
 
   /** Get the full path data from root to a node */
   async *contextGetPath(nodeId: UUID, treeId: UUID): AsyncGenerator<ArborEvent> {
-    const stream = this.rpc.call('arbor.context_get_path', { nodeId, treeId });
+    const stream = this.rpc.call('arbor.context_get_path', { node_id: nodeId, tree_id: treeId });
     yield* extractData<ArborEvent>(stream);
   }
 
   /** List all leaf nodes in a tree */
   async *contextListLeaves(treeId: UUID): AsyncGenerator<ArborEvent> {
-    const stream = this.rpc.call('arbor.context_list_leaves', { treeId });
+    const stream = this.rpc.call('arbor.context_list_leaves', { tree_id: treeId });
     yield* extractData<ArborEvent>(stream);
   }
 
   /** Create an external node in a tree */
   async *nodeCreateExternal(handle: Handle, treeId: UUID, metadata?: unknown, parent?: UUID | null): AsyncGenerator<ArborEvent> {
-    const stream = this.rpc.call('arbor.node_create_external', { handle, metadata, parent, treeId });
+    const stream = this.rpc.call('arbor.node_create_external', { handle: handle, metadata: metadata, parent: parent, tree_id: treeId });
     yield* extractData<ArborEvent>(stream);
   }
 
   /** Create a text node in a tree */
   async *nodeCreateText(content: string, treeId: UUID, metadata?: unknown, parent?: UUID | null): AsyncGenerator<ArborEvent> {
-    const stream = this.rpc.call('arbor.node_create_text', { content, metadata, parent, treeId });
+    const stream = this.rpc.call('arbor.node_create_text', { content: content, metadata: metadata, parent: parent, tree_id: treeId });
     yield* extractData<ArborEvent>(stream);
   }
 
   /** Get a node by ID */
   async *nodeGet(nodeId: UUID, treeId: UUID): AsyncGenerator<ArborEvent> {
-    const stream = this.rpc.call('arbor.node_get', { nodeId, treeId });
+    const stream = this.rpc.call('arbor.node_get', { node_id: nodeId, tree_id: treeId });
     yield* extractData<ArborEvent>(stream);
   }
 
   /** Get the children of a node */
   async *nodeGetChildren(nodeId: UUID, treeId: UUID): AsyncGenerator<ArborEvent> {
-    const stream = this.rpc.call('arbor.node_get_children', { nodeId, treeId });
+    const stream = this.rpc.call('arbor.node_get_children', { node_id: nodeId, tree_id: treeId });
     yield* extractData<ArborEvent>(stream);
   }
 
   /** Get the parent of a node */
   async *nodeGetParent(nodeId: UUID, treeId: UUID): AsyncGenerator<ArborEvent> {
-    const stream = this.rpc.call('arbor.node_get_parent', { nodeId, treeId });
+    const stream = this.rpc.call('arbor.node_get_parent', { node_id: nodeId, tree_id: treeId });
     yield* extractData<ArborEvent>(stream);
   }
 
   /** Get the path from root to a node */
   async *nodeGetPath(nodeId: UUID, treeId: UUID): AsyncGenerator<ArborEvent> {
-    const stream = this.rpc.call('arbor.node_get_path', { nodeId, treeId });
+    const stream = this.rpc.call('arbor.node_get_path', { node_id: nodeId, tree_id: treeId });
     yield* extractData<ArborEvent>(stream);
   }
 
@@ -116,25 +116,25 @@ export class ArborClientImpl implements ArborClient {
 
   /** Claim ownership of a tree (increment reference count) */
   async *treeClaim(count: number, ownerId: string, treeId: UUID): AsyncGenerator<ArborEvent> {
-    const stream = this.rpc.call('arbor.tree_claim', { count, ownerId, treeId });
+    const stream = this.rpc.call('arbor.tree_claim', { count: count, owner_id: ownerId, tree_id: treeId });
     yield* extractData<ArborEvent>(stream);
   }
 
   /** Create a new conversation tree */
   async *treeCreate(ownerId: string, metadata?: unknown): AsyncGenerator<ArborEvent> {
-    const stream = this.rpc.call('arbor.tree_create', { metadata, ownerId });
+    const stream = this.rpc.call('arbor.tree_create', { metadata: metadata, owner_id: ownerId });
     yield* extractData<ArborEvent>(stream);
   }
 
   /** Retrieve a complete tree with all nodes */
   async *treeGet(treeId: UUID): AsyncGenerator<ArborEvent> {
-    const stream = this.rpc.call('arbor.tree_get', { treeId });
+    const stream = this.rpc.call('arbor.tree_get', { tree_id: treeId });
     yield* extractData<ArborEvent>(stream);
   }
 
   /** Get lightweight tree structure without node data */
   async *treeGetSkeleton(treeId: UUID): AsyncGenerator<ArborEvent> {
-    const stream = this.rpc.call('arbor.tree_get_skeleton', { treeId });
+    const stream = this.rpc.call('arbor.tree_get_skeleton', { tree_id: treeId });
     yield* extractData<ArborEvent>(stream);
   }
 
@@ -158,19 +158,19 @@ export class ArborClientImpl implements ArborClient {
 
   /** Release ownership of a tree (decrement reference count) */
   async *treeRelease(count: number, ownerId: string, treeId: UUID): AsyncGenerator<ArborEvent> {
-    const stream = this.rpc.call('arbor.tree_release', { count, ownerId, treeId });
+    const stream = this.rpc.call('arbor.tree_release', { count: count, owner_id: ownerId, tree_id: treeId });
     yield* extractData<ArborEvent>(stream);
   }
 
-  /** Render tree as text visualization */
+  /** Render tree as text visualization  If parent context is available, automatically resolves handles to show actual content. Otherwise, shows handle references. */
   async *treeRender(treeId: UUID): AsyncGenerator<ArborEvent> {
-    const stream = this.rpc.call('arbor.tree_render', { treeId });
+    const stream = this.rpc.call('arbor.tree_render', { tree_id: treeId });
     yield* extractData<ArborEvent>(stream);
   }
 
   /** Update tree metadata */
   async *treeUpdateMetadata(metadata: unknown, treeId: UUID): AsyncGenerator<ArborEvent> {
-    const stream = this.rpc.call('arbor.tree_update_metadata', { metadata, treeId });
+    const stream = this.rpc.call('arbor.tree_update_metadata', { metadata: metadata, tree_id: treeId });
     yield* extractData<ArborEvent>(stream);
   }
 

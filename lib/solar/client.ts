@@ -21,7 +21,7 @@ export class SolarClientImpl implements SolarClient {
 
   /** Get information about a specific celestial body */
   async *info(path: string): AsyncGenerator<SolarEvent> {
-    const stream = this.rpc.call('solar.info', { path });
+    const stream = this.rpc.call('solar.info', { path: path });
     yield* extractData<SolarEvent>(stream);
   }
 

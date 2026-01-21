@@ -80,8 +80,8 @@ export type ChatStartResult = ChatStartResult_Started | ChatStartResult_Error;
 
 export interface ChatStartResult_Started {
   type: 'started';
-  /** Session ID - use this with poll() to get events */
   sessionId: string;
+  streamId: string;
 }
 
 export interface ChatStartResult_Error {
@@ -213,20 +213,6 @@ export interface ListResult_Error {
 /** Model selection for Claude Code */
 export type Model = "opus" | "sonnet" | "haiku";
 
-/** Pending approval from loopback (simplified for poll response) */
-export interface PendingApproval {
-  /** When the request was created */
-  createdAt: number;
-  /** Approval ID (use this with loopback.respond) */
-  id: string;
-  /** Tool input parameters */
-  input: unknown;
-  /** Tool requesting approval */
-  toolName: string;
-  /** Tool use ID from Claude */
-  toolUseId: string;
-}
-
 /** Result of polling a stream for events */
 export type PollResult = PollResult_Ok | PollResult_Error;
 
@@ -236,8 +222,6 @@ export interface PollResult_Ok {
   events: BufferedEvent[];
   /** True if there are more events available */
   hasMore: boolean;
-  /** Pending approvals for this session (if loopback enabled) */
-  pendingApprovals: PendingApproval[];
   /** Current read position after this poll */
   readPosition: number;
   /** Current stream status */
@@ -247,6 +231,42 @@ export interface PollResult_Ok {
 }
 
 export interface PollResult_Error {
+  type: 'error';
+  message: string;
+}
+
+
+/** Information about an active stream */
+export interface StreamInfo {
+  /** When the stream ended (if complete/failed) */
+  endedAt?: number | null;
+  /** Error message if failed */
+  error?: string | null;
+  /** Number of events buffered */
+  eventCount: number;
+  /** Read position (how many events have been consumed) */
+  readPosition: number;
+  /** Session this stream belongs to */
+  sessionId: string;
+  /** When the stream started */
+  startedAt: number;
+  /** Current status */
+  status: StreamStatus;
+  /** Unique stream identifier */
+  streamId: string;
+  /** Position of the user message node (set at start) */
+  userPosition?: Position | null;
+}
+
+/** Result of listing active streams */
+export type StreamListResult = StreamListResult_Ok | StreamListResult_Error;
+
+export interface StreamListResult_Ok {
+  type: 'ok';
+  streams: StreamInfo[];
+}
+
+export interface StreamListResult_Error {
   type: 'error';
   message: string;
 }

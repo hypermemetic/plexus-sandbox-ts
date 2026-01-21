@@ -23,7 +23,7 @@ export class HyperforgeForgeClientImpl implements HyperforgeForgeClient {
 
   /** Check authentication status for a forge */
   async *auth(forge: string, org?: string | null): AsyncGenerator<ForgeEvent> {
-    const stream = this.rpc.call('hyperforge.forge.auth', { forge, org });
+    const stream = this.rpc.call('hyperforge.forge.auth', { forge: forge, org: org });
     yield* extractData<ForgeEvent>(stream);
   }
 
@@ -35,7 +35,7 @@ export class HyperforgeForgeClientImpl implements HyperforgeForgeClient {
 
   /** Refresh/update token for a forge */
   async *refresh(forge: string, org?: string | null, token?: string | null): AsyncGenerator<ForgeEvent> {
-    const stream = this.rpc.call('hyperforge.forge.refresh', { forge, org, token });
+    const stream = this.rpc.call('hyperforge.forge.refresh', { forge: forge, org: org, token: token });
     yield* extractData<ForgeEvent>(stream);
   }
 

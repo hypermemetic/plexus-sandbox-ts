@@ -19,7 +19,7 @@ export class BashClientImpl implements BashClient {
 
   /** Execute a bash command and stream stdout, stderr, and exit code */
   async *execute(command: string): AsyncGenerator<BashEvent> {
-    const stream = this.rpc.call('bash.execute', { command });
+    const stream = this.rpc.call('bash.execute', { command: command });
     yield* extractData<BashEvent>(stream);
   }
 

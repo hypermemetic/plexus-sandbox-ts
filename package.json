@@ -6,6 +6,9 @@
   "scripts": {
     "dev": "tsx watch src/main.ts",
     "start": "tsx src/main.ts",
+    "agent": "tsx src/agent-example.ts",
+    "agent:watch": "tsx watch src/agent-example.ts",
+    "agent:simple": "tsx src/agent-simple-example.ts",
     "build": "tsc",
     "typecheck": "tsc --noEmit"
   },

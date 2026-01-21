@@ -33,7 +33,7 @@ export class HyperforgeWorkspaceClientImpl implements HyperforgeWorkspaceClient 
 
   /** Bind a directory to an organization */
   async *bind(orgName: string, path: string, autoCreate?: boolean | null): AsyncGenerator<WorkspaceEvent> {
-    const stream = this.rpc.call('hyperforge.workspace.bind', { autoCreate, orgName, path });
+    const stream = this.rpc.call('hyperforge.workspace.bind', { auto_create: autoCreate, org_name: orgName, path: path });
     yield* extractData<WorkspaceEvent>(stream);
   }
 
@@ -45,13 +45,13 @@ export class HyperforgeWorkspaceClientImpl implements HyperforgeWorkspaceClient 
 
   /** Show diff for all orgs bound to current workspace */
   async *diff(path?: string | null): AsyncGenerator<WorkspaceEvent> {
-    const stream = this.rpc.call('hyperforge.workspace.diff', { path });
+    const stream = this.rpc.call('hyperforge.workspace.diff', { path: path });
     yield* extractData<WorkspaceEvent>(stream);
   }
 
   /** Import repos for all orgs bound to current workspace */
   async *import(includePrivate?: boolean | null): AsyncGenerator<WorkspaceEvent> {
-    const stream = this.rpc.call('hyperforge.workspace.import', { includePrivate });
+    const stream = this.rpc.call('hyperforge.workspace.import', { include_private: includePrivate });
     yield* extractData<WorkspaceEvent>(stream);
   }
 
@@ -69,19 +69,19 @@ export class HyperforgeWorkspaceClientImpl implements HyperforgeWorkspaceClient 
 
   /** Show current workspace resolution */
   async *show(path?: string | null): AsyncGenerator<WorkspaceEvent> {
-    const stream = this.rpc.call('hyperforge.workspace.show', { path });
+    const stream = this.rpc.call('hyperforge.workspace.show', { path: path });
     yield* extractData<WorkspaceEvent>(stream);
   }
 
   /** Sync repos for all orgs bound to current workspace */
   async *sync(yes?: boolean | null): AsyncGenerator<WorkspaceEvent> {
-    const stream = this.rpc.call('hyperforge.workspace.sync', { yes });
+    const stream = this.rpc.call('hyperforge.workspace.sync', { yes: yes });
     yield* extractData<WorkspaceEvent>(stream);
   }
 
   /** Remove a workspace binding */
   async *unbind(path: string): AsyncGenerator<WorkspaceEvent> {
-    const stream = this.rpc.call('hyperforge.workspace.unbind', { path });
+    const stream = this.rpc.call('hyperforge.workspace.unbind', { path: path });
     yield* extractData<WorkspaceEvent>(stream);
   }
 

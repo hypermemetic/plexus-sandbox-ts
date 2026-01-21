@@ -27,13 +27,13 @@ export class HyperforgeOrgClientImpl implements HyperforgeOrgClient {
 
   /** Create a new organization */
   async *create(forges: string, orgName: string, origin: string, owner: string, sshKey: string, defaultVisibility?: string | null): AsyncGenerator<OrgEvent> {
-    const stream = this.rpc.call('hyperforge.org.create', { defaultVisibility, forges, orgName, origin, owner, sshKey });
+    const stream = this.rpc.call('hyperforge.org.create', { default_visibility: defaultVisibility, forges: forges, org_name: orgName, origin: origin, owner: owner, ssh_key: sshKey });
     yield* extractData<OrgEvent>(stream);
   }
 
   /** Import repositories from existing forges */
   async *import(orgName: string, dryRun?: boolean | null, includePrivate?: boolean | null): AsyncGenerator<OrgEvent> {
-    const stream = this.rpc.call('hyperforge.org.import', { dryRun, includePrivate, orgName });
+    const stream = this.rpc.call('hyperforge.org.import', { dry_run: dryRun, include_private: includePrivate, org_name: orgName });
     yield* extractData<OrgEvent>(stream);
   }
 
@@ -45,7 +45,7 @@ export class HyperforgeOrgClientImpl implements HyperforgeOrgClient {
 
   /** Remove an organization */
   async *remove(orgName: string): AsyncGenerator<OrgEvent> {
-    const stream = this.rpc.call('hyperforge.org.remove', { orgName });
+    const stream = this.rpc.call('hyperforge.org.remove', { org_name: orgName });
     yield* extractData<OrgEvent>(stream);
   }
 
@@ -57,7 +57,7 @@ export class HyperforgeOrgClientImpl implements HyperforgeOrgClient {
 
   /** Show details of a specific organization */
   async *show(orgName: string): AsyncGenerator<OrgEvent> {
-    const stream = this.rpc.call('hyperforge.org.show', { orgName });
+    const stream = this.rpc.call('hyperforge.org.show', { org_name: orgName });
     yield* extractData<OrgEvent>(stream);
   }
 

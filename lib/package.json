@@ -1,6 +1,6 @@
 {
   "name": "@plexus/client",
-  "version": "0.0.0-65ec630bdb7a1502",
+  "version": "0.0.0-ab684e2f2b025929",
   "type": "module",
   "main": "index.ts",
   "scripts": {
@@ -11,8 +11,8 @@
     "ws": "^8.0.0"
   },
   "devDependencies": {
-    "@types/ws": "^8.18.1",
     "tsx": "^4.0.0",
-    "typescript": "^5.0.0"
+    "typescript": "^5.0.0",
+    "@types/ws": "^8.0.0"
   }
 }

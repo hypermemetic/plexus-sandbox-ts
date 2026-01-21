@@ -35,49 +35,49 @@ export class HyperforgeOrgHypermemeticReposClientImpl implements HyperforgeOrgHy
 
   /** Clone a repository from forges and configure remotes */
   async *clone(repoName: string, target?: string | null): AsyncGenerator<RepoEvent> {
-    const stream = this.rpc.call('hyperforge.org.hypermemetic.repos.clone', { repoName, target });
+    const stream = this.rpc.call('hyperforge.org.hypermemetic.repos.clone', { repo_name: repoName, target: target });
     yield* extractData<RepoEvent>(stream);
   }
 
   /** Clone all repositories for an organization */
   async *cloneAll(target?: string | null): AsyncGenerator<RepoEvent> {
-    const stream = this.rpc.call('hyperforge.org.hypermemetic.repos.clone_all', { target });
+    const stream = this.rpc.call('hyperforge.org.hypermemetic.repos.clone_all', { target: target });
     yield* extractData<RepoEvent>(stream);
   }
 
   /** Full bidirectional sync with convergence verification */
   async *converge(dryRun?: boolean | null, yes?: boolean | null): AsyncGenerator<RepoEvent> {
-    const stream = this.rpc.call('hyperforge.org.hypermemetic.repos.converge', { dryRun, yes });
+    const stream = this.rpc.call('hyperforge.org.hypermemetic.repos.converge', { dry_run: dryRun, yes: yes });
     yield* extractData<RepoEvent>(stream);
   }
 
   /** Create/update a repository configuration */
   async *create(repoName: string, description?: string | null, forges?: string | null, initLocal?: boolean | null, path?: string | null, visibility?: string | null): AsyncGenerator<RepoEvent> {
-    const stream = this.rpc.call('hyperforge.org.hypermemetic.repos.create', { description, forges, initLocal, path, repoName, visibility });
+    const stream = this.rpc.call('hyperforge.org.hypermemetic.repos.create', { description: description, forges: forges, init_local: initLocal, path: path, repo_name: repoName, visibility: visibility });
     yield* extractData<RepoEvent>(stream);
   }
 
   /** Compare local desired state vs remote actual state */
   async *diff(refresh?: boolean | null): AsyncGenerator<RepoEvent> {
-    const stream = this.rpc.call('hyperforge.org.hypermemetic.repos.diff', { refresh });
+    const stream = this.rpc.call('hyperforge.org.hypermemetic.repos.diff', { refresh: refresh });
     yield* extractData<RepoEvent>(stream);
   }
 
   /** List repositories in this organization */
   async *list(staged?: boolean | null): AsyncGenerator<RepoEvent> {
-    const stream = this.rpc.call('hyperforge.org.hypermemetic.repos.list', { staged });
+    const stream = this.rpc.call('hyperforge.org.hypermemetic.repos.list', { staged: staged });
     yield* extractData<RepoEvent>(stream);
   }
 
   /** Refresh local state from forge APIs */
   async *refresh(force?: boolean | null): AsyncGenerator<RepoEvent> {
-    const stream = this.rpc.call('hyperforge.org.hypermemetic.repos.refresh', { force });
+    const stream = this.rpc.call('hyperforge.org.hypermemetic.repos.refresh', { _force: force });
     yield* extractData<RepoEvent>(stream);
   }
 
   /** Mark a repository for deletion */
   async *remove(repoName: string, force?: boolean | null): AsyncGenerator<RepoEvent> {
-    const stream = this.rpc.call('hyperforge.org.hypermemetic.repos.remove', { force, repoName });
+    const stream = this.rpc.call('hyperforge.org.hypermemetic.repos.remove', { force: force, repo_name: repoName });
     yield* extractData<RepoEvent>(stream);
   }
 
@@ -89,7 +89,7 @@ export class HyperforgeOrgHypermemeticReposClientImpl implements HyperforgeOrgHy
 
   /** Sync repositories to forges */
   async *sync(dryRun?: boolean | null, repoName?: string | null, yes?: boolean | null): AsyncGenerator<RepoEvent> {
-    const stream = this.rpc.call('hyperforge.org.hypermemetic.repos.sync', { dryRun, repoName, yes });
+    const stream = this.rpc.call('hyperforge.org.hypermemetic.repos.sync', { dry_run: dryRun, repo_name: repoName, yes: yes });
     yield* extractData<RepoEvent>(stream);
   }
 

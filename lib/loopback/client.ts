@@ -25,25 +25,25 @@ export class LoopbackClientImpl implements LoopbackClient {
 
   /** Generate MCP configuration for a loopback session */
   async configure(sessionId: string): Promise<ConfigureResult> {
-    const stream = this.rpc.call('loopback.configure', { sessionId });
+    const stream = this.rpc.call('loopback.configure', { session_id: sessionId });
     return collectOne<ConfigureResult>(stream);
   }
 
   /** List pending approval requests */
   async pending(sessionId?: string | null): Promise<PendingResult> {
-    const stream = this.rpc.call('loopback.pending', { sessionId });
+    const stream = this.rpc.call('loopback.pending', { session_id: sessionId });
     return collectOne<PendingResult>(stream);
   }
 
   /** Permission prompt handler - blocks until parent approves/denies  This is called by Claude Code CLI via --permission-prompt-tool. It blocks (polls) until the parent calls loopback.respond().  Returns a JSON string (not object) because Claude Code expects the MCP response to have the permission JSON already stringified in content[0].text. See: https://github.com/anthropics/claude-code/blob/main/docs/permission-prompt-tool.md */
   async permit(input: unknown, toolName: string, toolUseId: string): Promise<String> {
-    const stream = this.rpc.call('loopback.permit', { input, toolName, toolUseId });
+    const stream = this.rpc.call('loopback.permit', { input: input, tool_name: toolName, tool_use_id: toolUseId });
     return collectOne<String>(stream);
   }
 
   /** Respond to a pending approval request */
   async respond(approvalId: string, approve: boolean, message?: string | null): Promise<RespondResult> {
-    const stream = this.rpc.call('loopback.respond', { approvalId, approve, message });
+    const stream = this.rpc.call('loopback.respond', { approval_id: approvalId, approve: approve, message: message });
     return collectOne<RespondResult>(stream);
   }
 
