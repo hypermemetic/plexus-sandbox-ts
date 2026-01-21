@@ -67,7 +67,7 @@ Examples:
         plugin: activation,
         method,
         args: params,
-        raw: true
+        raw: false  // Use pretty formatted output
       };
     }
   };

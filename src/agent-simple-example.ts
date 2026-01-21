@@ -29,35 +29,10 @@ async function main() {
   console.log(`Connecting to Plexus at ${PLEXUS_URL}...`);
   const rpc = createClient({ url: PLEXUS_URL });
 
-  // Create a Cone for LLM reasoning
-  console.log('Creating Cone for reasoning...');
-  const cone = new Cone.ConeClientImpl(rpc);
-
-  const createResult = await cone.create(
-    'claude-sonnet-4-5-20250929',
-    'discovery-agent',
-    {},
-    undefined  // No system prompt yet - we'll add it in agent config
-  );
-
-  if (createResult.type !== 'cone_created') {
-    console.error('Failed to create cone:', createResult);
-    process.exit(1);
-  }
-
-  // Create proper ConeIdentifier using the generated type
-  const coneIdentifier: Cone.ConeIdentifier = {
-    type: 'by_id',
-    id: createResult.coneId
-  };
-  console.log(`✓ Cone created: ${createResult.coneId.substring(0, 8)}...`);
-  console.log();
-
   // Register just ONE tool - the generic synapse_call
   console.log('Registering tools...');
   const tools = new DefaultToolRegistry();
   tools.register(createSynapseCallTool());
-
   console.log('Available tools: synapse_call (discovers everything else)');
   console.log();
 
@@ -69,6 +44,30 @@ ${getSynapseDiscoveryDocs()}
 When asked to do something, first think about what Synapse commands you need, then use the synapse_call tool to execute them.
 
 You can explore the API surface dynamically - use bash.execute to run synapse --help commands if you need to discover what's available.`;
+
+  // Create a Cone for LLM reasoning WITH system prompt
+  console.log('Creating Cone for reasoning...');
+  const cone = new Cone.ConeClientImpl(rpc);
+  const coneName = `discovery-${Date.now()}`;
+
+  const createResult = await cone.create(
+    'claude-sonnet-4-5-20250929',
+    coneName,
+    {},
+    systemPrompt  // ← System prompt set at creation!
+  );
+
+  if (createResult.type !== 'cone_created') {
+    console.error('Failed to create cone:', createResult);
+    process.exit(1);
+  }
+
+  const coneIdentifier: Cone.ConeIdentifier = {
+    type: 'by_id',
+    id: createResult.coneId
+  };
+  console.log(`✓ Cone created: ${createResult.coneId.substring(0, 8)}...`);
+  console.log();
 
   // Create agent
   const agent = createAgent('discovery-agent')

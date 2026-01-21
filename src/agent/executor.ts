@@ -14,53 +14,7 @@ import type { Agent, AgentConfig, AgentEvent, ToolCall, Tool } from './types';
 import { Cone } from '@plexus/client';
 import { executeSynapse } from './synapse';
 import { buildToolsPrompt, formatToolResult } from './tools';
-
-// ============================================================================
-// Tool Call Parsing
-// ============================================================================
-
-/**
- * Parse tool calls from LLM output
- *
- * LLM outputs tool calls as:
- *   <tool>{"name":"tool_name","input":{...}}</tool>
- *
- * This function extracts all such markers and parses them.
- */
-function parseToolCalls(text: string): ToolCall[] {
-  const toolCalls: ToolCall[] = [];
-  const regex = /<tool>(.*?)<\/tool>/gs;
-  let match;
-
-  while ((match = regex.exec(text)) !== null) {
-    try {
-      const json = match[1].trim();
-      const parsed = JSON.parse(json);
-
-      if (parsed.name && parsed.input !== undefined) {
-        toolCalls.push({
-          id: `tool_${Date.now()}_${toolCalls.length}`,
-          name: parsed.name,
-          input: parsed.input
-        });
-      }
-    } catch (err) {
-      // Invalid JSON in tool marker - skip it
-      console.error('Failed to parse tool call:', match[1], err);
-    }
-  }
-
-  return toolCalls;
-}
-
-/**
- * Strip tool markers from text for clean display
- *
- * Removes <tool>...</tool> blocks from the text.
- */
-function stripToolMarkers(text: string): string {
-  return text.replace(/<tool>.*?<\/tool>/gs, '').trim();
-}
+import { ToolCallStreamParser } from './stream-parser';
 
 // ============================================================================
 // System Prompt Building
@@ -76,21 +30,27 @@ function buildSystemPrompt(baseSystem: string, tools: Tool[]): string {
 
   return `${baseSystem}
 
-# Tool Calling
-
-You have access to tools that can help you complete tasks. To use a tool, output EXACTLY:
-
-<tool>
-{"name": "tool_name", "input": {"param": "value"}}
-</tool>
+# Available Tools
 
 ${toolsPrompt}
 
-Important:
-- Output tool calls as valid JSON inside <tool> tags
-- You can call multiple tools in one response
-- After tool results are provided, give a final answer to the user
-- Do not explain the tool call, just output it
+## IMPORTANT: Tool Usage Instructions
+
+To call a tool, you MUST use this EXACT XML format with the tool call on its own line:
+
+<tool>{"name": "synapse_call", "input": {"activation": "health", "method": "check", "params": {}}}</tool>
+
+DO NOT make up responses. DO NOT use other formats. If you need information from the system, you MUST call the synapse_call tool.
+
+Example conversation:
+User: Is the system healthy?
+You: Let me check the system status.
+
+<tool>{"name": "synapse_call", "input": {"activation": "health", "method": "check", "params": {}}}</tool>
+
+[I will execute the tool and give you the result]
+System Result: {"status":"healthy"}
+You: The system is healthy!
 `;
 }
 
@@ -131,51 +91,66 @@ export class AgentExecutor implements Agent {
       yield { type: 'thinking', message: `Turn ${turn}` };
 
       try {
-        // Stream from Cone
-        let fullResponse = '';
+        // Create streaming parser for this turn
+        const parser = new ToolCallStreamParser();
+        let fullVisibleText = '';
+        const allToolCalls: ToolCall[] = [];
         let responseComplete = false;
 
+        // Stream from Cone and parse incrementally
         for await (const event of cone.chat(
           identifier,
           currentPrompt,
           this.config.ephemeral || false
         )) {
           if (event.type === 'chat_content') {
-            // Streaming text content from Cone
-            fullResponse += event.content;
+            // Feed chunk to parser
+            const { toolCalls, visibleText } = parser.feed(event.content);
 
-            // Emit chunks without tool markers for clean display
-            const cleanChunk = stripToolMarkers(event.content);
-            if (cleanChunk) {
-              yield { type: 'response_chunk', text: cleanChunk };
+            // Accumulate visible text
+            fullVisibleText += visibleText;
+
+            // Emit clean text chunks to user
+            if (visibleText) {
+              yield { type: 'response_chunk', text: visibleText };
             }
+
+            // Collect tool calls as they're detected
+            allToolCalls.push(...toolCalls);
           } else if (event.type === 'chat_complete') {
             responseComplete = true;
 
-            // Parse tool calls from the complete response
-            const toolCalls = parseToolCalls(fullResponse);
+            // Get any final buffered content
+            const final = parser.finish();
+            fullVisibleText += final.visibleText;
+            allToolCalls.push(...final.toolCalls);
 
-            if (toolCalls.length === 0) {
+            if (final.visibleText) {
+              yield { type: 'response_chunk', text: final.visibleText };
+            }
+
+            // Emit complete response
+            yield { type: 'response_complete', text: fullVisibleText };
+
+            if (allToolCalls.length === 0) {
               // No tool calls - we're done!
-              const finalText = stripToolMarkers(fullResponse);
-              yield { type: 'response_complete', text: finalText };
-              yield { type: 'done', finalResponse: finalText };
+              yield { type: 'done', finalResponse: fullVisibleText };
               return;
             }
 
             // Check tool call limit
-            if (toolCalls.length > maxToolCallsPerTurn) {
-              const error = `Too many tool calls (${toolCalls.length}), max is ${maxToolCallsPerTurn}`;
+            if (allToolCalls.length > maxToolCallsPerTurn) {
+              const error = `Too many tool calls (${allToolCalls.length}), max is ${maxToolCallsPerTurn}`;
               yield { type: 'error', error };
               return;
             }
 
             // Execute tools
-            const results = await this.executeTools(toolCalls);
+            const results = await this.executeTools(allToolCalls);
 
             // Yield tool results
-            for (let i = 0; i < toolCalls.length; i++) {
-              const call = toolCalls[i];
+            for (let i = 0; i < allToolCalls.length; i++) {
+              const call = allToolCalls[i];
               const result = results[i];
               yield {
                 type: 'tool_result',
@@ -186,7 +161,7 @@ export class AgentExecutor implements Agent {
             }
 
             // Build next prompt with tool results
-            currentPrompt = this.formatToolResultsPrompt(toolCalls, results);
+            currentPrompt = this.formatToolResultsPrompt(allToolCalls, results);
 
             // Continue loop to send results back to Cone
             break;
@@ -238,7 +213,7 @@ export class AgentExecutor implements Agent {
         if (result.success) {
           results.push({
             success: true,
-            value: result.data
+            value: result.data !== undefined ? result.data : result.stdout  // Use stdout if not parsed
           });
         } else {
           results.push({

@@ -112,7 +112,7 @@ export function createSynapseTool(
         args: synapseMapping.argMapper
           ? synapseMapping.argMapper(input)
           : (input as Record<string, unknown>),
-        raw: true
+        raw: false  // Use pretty formatted output
       };
     }
   };
