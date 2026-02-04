@@ -76,7 +76,7 @@ Connecting to Plexus at ws://localhost:4444...
 
 📊 Health Check
 ──────────────────────────────────────────────────
-✓ Hub is healthy
+✓ Plexus is healthy
   Uptime: 12345s
 
 🔊 Echo Service
@@ -117,7 +117,7 @@ npm install file:../substrate-sandbox-ts/lib
 cabal run synapse -- -i > /tmp/my-ir.json
 
 # Generate TypeScript client
-cargo run --release --manifest-path ../hub-codegen/Cargo.toml -- \
+cargo run --release --manifest-path ../plexus-codegen/Cargo.toml -- \
   /tmp/my-ir.json -o ./my-plexus-client
 
 # Use in your project
@@ -197,7 +197,7 @@ for await (const event of repos.list()) {
 cabal run synapse -- -i > /tmp/ir-current.json
 
 # 2. Regenerate TypeScript library
-cargo run --release --manifest-path ../hub-codegen/Cargo.toml -- \
+cargo run --release --manifest-path ../plexus-codegen/Cargo.toml -- \
   /tmp/ir-current.json -o ./lib
 
 # 3. Reinstall dependencies
@@ -211,7 +211,7 @@ npm run typecheck
 ### Troubleshooting
 
 **Type errors after regeneration:**
-- Ensure hub-codegen is rebuilt: `cd ../hub-codegen && cargo build --release`
+- Ensure plexus-codegen is rebuilt: `cd ../plexus-codegen && cargo build --release`
 - Check IR version: `jq '.irVersion' /tmp/ir.json` should be `"2.0"`
 
 **Connection refused:**

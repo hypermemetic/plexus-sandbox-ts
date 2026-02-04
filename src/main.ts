@@ -35,7 +35,7 @@ async function main() {
     const healthStatus = await health.check();
 
     if (healthStatus.type === 'status') {
-      console.log(`✓ Hub is healthy`);
+      console.log(`✓ Plexus is healthy`);
       console.log(`  Uptime: ${healthStatus.uptimeSeconds}s`);
     }
 

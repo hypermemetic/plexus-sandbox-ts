@@ -156,7 +156,7 @@ export function createEchoTool(): Tool {
 export function createHealthCheckTool(): Tool {
   return createSynapseTool(
     'health_check',
-    'Check if the hub/substrate is healthy and get uptime information.',
+    'Check if Plexus/substrate is healthy and get uptime information.',
     {
       type: 'object',
       properties: {}

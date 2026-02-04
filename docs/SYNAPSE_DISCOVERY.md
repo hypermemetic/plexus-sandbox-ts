@@ -25,7 +25,7 @@ Synapse is an algebraic CLI for Plexus with excellent introspection capabilities
 $ synapse plexus --help
 
 activations
-  health       Check hub health and uptime
+  health       Check Plexus health and uptime
   echo         Echo messages back
   cone         LLM cone with persistent conversation context
   ...
@@ -34,12 +34,12 @@ activations
 $ synapse plexus health --help
 
 methods
-  check        Check if the hub/substrate is healthy and get uptime information
+  check        Check if Plexus/substrate is healthy and get uptime information
 
 # Step 3: What parameters does check need?
 $ synapse plexus health check --help
 
-  check        Check if the hub/substrate is healthy and get uptime information
+  check        Check if Plexus/substrate is healthy and get uptime information
               (no parameters required)
 
 # Step 4: Call it
@@ -253,7 +253,7 @@ synapse plexus --schema | jq '.children[] | {namespace, description}'
 ```bash
 # Discovery
 synapse plexus --help | grep -E "health|cone"
-# → health       Check hub health and uptime
+# → health       Check Plexus health and uptime
 # → cone         LLM cone with persistent conversation context
 
 # Execute
