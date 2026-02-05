@@ -101,7 +101,7 @@ Synapse is self-documenting. Discover APIs using --help:
 - health: System status (health.check)
 - echo: Testing (echo.once, echo.echo)
 - cone: LLM agents (cone.list, cone.create, cone.chat, cone.get, cone.delete)
-- arbor: Conversation trees (arbor.tree-list, arbor.tree-get)
+- arbor: Conversation trees (arbor.tree_list, arbor.tree_get)
 - bash: Command execution (bash.execute)
 - solar: Example hierarchy (solar.observe, solar.earth.info)
 
