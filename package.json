@@ -15,7 +15,8 @@
   "dependencies": {
     "@plexus/client": "file:./lib",
     "@streamparser/json": "^0.0.22",
-    "saxes": "^6.0.0"
+    "saxes": "^6.0.0",
+    "ws": "^8.19.0"
   },
   "devDependencies": {
     "@types/node": "^20.10.0",
