@@ -296,12 +296,12 @@ export class SubstrateClient implements RpcClient {
       done: false,
     };
 
-    // Send request - wrap in plexus.call
+    // Send request - wrap in substrate.call
     const id = this.nextId++;
     const request: JsonRpcRequest = {
       jsonrpc: '2.0',
       id,
-      method: 'plexus.call',
+      method: 'substrate.call',
       params: {
         method,
         params: params ?? {},
